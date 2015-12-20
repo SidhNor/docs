@@ -1,0 +1,979 @@
+FORMAT: 1A
+HOST: http://autokredito.apiblueprint.org/
+
+# AutoLT
+
+API blueprints for AutoLT to allow customer to go through registration flow as well as apply for a loan
+
+Here is a basic flow of request that are made screen by screen
+
+# Group User profile, authentication and registration
+
+## User registration [/user/register]
+
+### Register new user [POST]
++ Attributes
+    + firstName: TestFirstName (required, string) - Users first name
+    + lastName: TestSurname (required, string) - Users surname
+    + email: testemail@testserver.com (required, string) - Users email
+    + client: auto-lt-website (required, string) - oAuth client id
+
++ Request (application/json)
+
+        {
+            "firstName": "TestFirstName",
+            "lastName": "TestSurname",
+            "email": "testemail@testserver.com"
+            "client": "auto-lt-website"
+        }
+
++ Response 201 (application/json)
+
+        {
+            "temporaryPassword": "akghakjdghu42iu2h4jkkdh9813yedh109313rhudh1783"
+        }
+
++ Response 400 (application/json)
+        
+        {
+            "errorKey": "duplicate_user"
+        }
+
++ Response 500
+
+## Password change [/user/password]
+
+### Change password [PUT]
++ Attributes
+    + email: teseail@testserver.com (required, string) - Users email/username
+    + client: auto-lt-website (required, string) - oAuth client id - auto-lt-website
+    + oldPassword: 1234567 (required, string) - Either old password or token sent in email
+    + newPassword: 9876637 (required, string) - New password
+
++ Request (application/x-www-form-urlencoded)
+
++ Response 200
++ Response 400 (application/json)
+    
+        {
+            "errorKey":"user_not_found" [OR]
+            "errorKey":"old_password_incorrect"
+        }
+    
++ Response 500
+
+## Send reset password email [/user/password/reset]
+
+### Send reset password email [POST]
++ Attributes
+    + email: test@test.com (required, string) - Users email/username
+    + client: auto-lt-website (required, string) - oAuth client id
+
++ Request (application/x-www-form-urlencoded)
+
++ Response 200 (application/json)
++ Response 400 (application/json)
+    
+        {
+            "errorKey": "user_not_found"
+        }
+   
++ Response 500
+    
+## Resend registration email [/user/registration/resend]
+
+### Resend registration email [POST]
++ Attributes
+    + email: test@test.com (required, string) - Users email/username
+    + client: auto-lt-website (required, string) - oAuth client id
+
++ Request (application/x-www-form-urlencoded)
+
++ Response 200 (application/json)
++ Response 400 (application/json)
+    
+        {
+            "errorKey": "user_not_found"
+        }
+   
++ Response 500
+
+
+## Login [/oauth/token]
+
+### Login [POST]
+    According to oAuth specification. Any additional requests should contain the Authorizatino header
+    
+        Authorization: Bearer akghakjdghu42iu2h4jkkdh9813yedh109313rhudh1783
++ Attributes
+    + username: test@test.com (required, string) - Users email/username
+    + password: password123 (required, string) - Password
+    + client_id: auto-lt-website (required, string) - oAuth client id
+    + client_secret: abcd1234 (required, string) - Client Secret
+    + grant_type: password (required, string) - Predefined value "password"
+
++ Request (application/x-www-form-urlencoded)
+
++ Response 200 (application/json)
+
+## User status [/{client}/{email}/status]
+
+### User status [GET]
+    Returns user status
+    
++ Request
+    + Attributes
+        + client: auto_lt_website (required, string) - oAuth Client ID
+        + email: test@testsr.com (required, string) - User email/username
+
++ Response 200 (application/json)
+    Can return the following statuses
+    VERIFIED, NOT_VERIFIED, BLOCKED, PASSWORD_CHANGE_REQUIRED
+    
+    + Body
+      
+            { "status": "VERIFIED" }
+
+# Group Phone verification
+
+## Phone verification [/client/smscode]
+### Send SMS code [POST]
+    Re/sends an SMS code to a phone number
+    
++ Request (application/x-www-form-urlencoded)
+    + Headers
+            
+            x-tenant: auto-lt
+            Authorization: Bearer j94fq93hgv0hv98ehrpavhu43hgvp954eiruvres
+    + Attributes
+        + phoneNumber: +420605789456 (string, required) - Phone number to verify
+
++ Response 200
++ Response 400 (application/json)
+        
+        {
+            "errorKey": "invalid_phone_number"
+        }
+
+### Get SMS code status [GET]
+    Get SMS code status
+    
++ Request (application/x-www-form-urlencoded)
+    + Headers
+            
+            x-tenant: auto-lt
+            Authorization: Bearer j94fq93hgv0hv98ehrpavhu43hgvp954eiruvres
+    + Attributes
+        + phoneNumber: +420605789456 (string, required) - Phone number to verify
+
++ Response 200
+    
+        Code is valid and ready for verification
+
++ Response 404 
+        
+        Code is not sent
+            
+
+## Phone verification - verify [/client/smscode/verify]
+
+### Verify phone [POST]
++ Request (application/x-www-form-urlencoded)
+    + Headers
+           
+            x-tenant: auto-lt
+            Authorization: Bearer j94fq93hgv0hv98ehrpavhu43hgvp954eiruvres
+    
+    + Attributes
+        + phoneNumber: +420605789456 (string, required) - Phone number to verify
+        + code: 456889 (string, required) - Verification code
+
++ Response 200 (application/json)
+        
+        {
+            "phoneNumber": "+420605789456"
+        }
+        
++ Response 400 (application/json)
+        
+        {
+            "errorKey": "verification_code_incorrect",
+        }
+
+
+
+# Group Static content
+## Static content [/content/{content_id}]
+### Get static content [GET]
++ Attributes
+    + content_id: general-terms (required, string) - Identifier of content (general-terms, privacy-policy, ... ) 
+
++ Request
+    + Headers
+    
+            x-tenant: auto-lt
+
++ Response 200 (text/html)
+
+        HTML containing the actual content
+
+# Group Abuse counter
+
+## Abuse counter [/abuse/counter]
+    Service allows to track counts of some functionality usage that is scarce.
+    Only called by nodejs server side, not client.
+### Increment counter and validate [POST]
++ Attributes
+    + user: test@testzer.com (required, string) - Username to which to increment counter
+    + abuse_counter: auto.lt.regitra (required, string) - Which counter to increment
+
+    
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+        
++ Response 200 (application/json)
+
+        {
+            "remainingAttempts": 5,
+            "block": false
+        }
+
++ Response 403 (application/json)
+
+        {
+            "remainingAttempts": 0,
+            "block": true
+        }
+
+### Get counter status [GET]
+    Returns current counter status without incrementing it
++ Attributes
+    + user: test@testzer.com (required, string) - Username to which to increment counter
+    + abuse_counter: auto.lt.regitra (required, string) - Which counter to increment
+
+    
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+        
++ Response 200 (application/json)
+
+        {
+            "remainingAttempts": 5,
+            "block": false
+        }
+
++ Response 403 (application/json)
+
+        {
+            "remainingAttempts": 0,
+            "block": true
+        }
+
+# Group Scheduling regitra meeting
+## Car register offices list [/car-register]
+### Car register offices list  [GET]
++ Request
+    + Headers
+    
+            x-tenant: auto-lt
+            
++ Response 200 (application/json)
+        
+        [
+            {
+                "officeId": "regitra-017",
+                "shortName: "Regitra Office in Vilnius",
+                "officeLink: "http://www.regitra.lt/offices/vilnius",
+                "address: "57 Vilnius road, Vilnius, 500 75"
+            }
+        ]
+
+
+## Car register office timeslots  [/car-register/{office_id}/timeslot?fromDate={from_date}&forDays={for_days}]
+### Car register office timeslots  [GET]
++ Attributes
+    + office_id: regitra-017 (required, string) - Regitra office ID
+    + from_date: 2015-07-17 (date) - Which date should the service start serving timeslots
+    + forDays: 7 (number) - For how many days should the service return timeslots
+
++ Request
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+
++ Response 200 (application/json)
+        
+        [
+            {
+                "timeSlotStart": "2015-12-20 13:00:00+02:00",
+                "timeSlotEnd": "2015-12-20 14:00:00+02:00",
+                "reserved": false
+            },
+            {
+                "timeSlotStart": "2015-12-20 14:00:00+02:00",
+                "timeSlotEnd": "2015-12-20 15:00:00+02:00",
+                "reserved": true
+            }
+        ]
+        
++ Response 400 (application/json)
+
+        {
+            "errorKey": "office_not_found"
+        }
+            
+## Reserve car register timeslot [/car-register/{office_id}/book]
+### Reserve car register timeslot [POST]
++ Attributes
+    + office_id: regitra-017 (required, string)
+    + timeSlotStart: "2015-12-20 13:00:00+02:00" (required, string) - Start of timeslot to reserve
+    + timeSlotEnd: "2015-12-20 14:00:00+02:00" (required, string) - End of timeslot to reserve
+
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    + Body
+    
+            {
+                "timeSlotStart": "2015-12-20 13:00:00+02:00",
+                "timeSlotEnd": "2015-12-20 14:00:00+02:00"
+            }
+
++ Response 200 (application/json)
+        
+        Sucessfully booked
+        
++ Response 400 (application/json)
+
+        {
+            "errorKey": "office_not_found",
+            "errorKey": "timeslot_already_reserved"
+        }
+
+# Group Application process
+## Get initial loan constraint data [/loan/constraints]
+### Get initial loan constraint data [GET]
++ Request
+    + Headers
+    
+            x-tenant: auto-lt
+
++ Response 200 (application/json)
+       
+        {
+            "minimalAskingPrice": 5000,
+            "maxPriceWithoutDeposit": 12500,
+            "maxCarAgeYears": 13,
+            "minApplicantAge": 18
+        }
+        
+
+## Application - Car [/application/car]
+### Add car to application [POST]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
+    + Attributes
+        + vin: TMBKE37293949294393  (string) - Car Vin number
+        + licensePlate: AKY-234 (string) - License place
+        + askingPrice: 8900 (number) - Asking price
+        + mileage: 85900 (number) - Car mileage
+    
+    + Body
+        
+            {
+                "vin": "TMBKE37293949294393",
+                "licensePlate": "AKY-234",
+                "askingPrice": 8900,
+                "mileage": 85900
+            }
+    
++ Response 200 (application/json)
+    + Attributes (CarDetails)
+
++ Response 400 (application/json)
+    
+
+### Car Details [GET]
+
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
++ Response 200 (application/json)
+    + Attributes (CarDetails)
+    
+    + Body
+            
+            {
+                "carId": "23092ru90294",
+                "askingPrice": 18500,
+                "make": "Toyota",
+                "model": "Avensis",
+                "engineSize": "1.6 P",
+                "mileage": 85900,
+                "color": "Blue",
+                "licence": "BBB 111",
+                "vin": "WP0ZZZ997TS392124",
+                "year": "2009",
+                "vmi": "WP0",
+                "vds": "ZZZ997",
+                "vis": "TS392124",
+                "status": "eligible",
+                "warnings": {
+                    "age": {"carAge": 8, "maxLoanLength": 36},
+                    "price": {"minimumDeposit": 1500}
+                }
+            }
+    
+
+
+## Application - Car confirmation [/application/car/confirm]
+### Confirm car and attach to application [POST]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
+    + Attributes
+        + carId: 432798743892892r  (required, string) - CarID generated in car check call
+    
+    + Body
+        
+            {
+                "carId": "432798743892892r"
+            }
+
++ Response 200 (application/json)
+    + Attributes (CarDetails)
+    
+
+
+## Application - Budget [/application/budget]
+### Add Budget [POST]
++ Attributes
+    + averageIncomePerMonth: 2500 (required, number) - Average income per month
+    + averageIncomePerMonthWillChange: false (required, boolean) - Whether clien expects budget to change in next month
+    + averageIncomePerMonthNextMonth: 2600 (required, number) - Average income per month after change
+    + incomeSource: Employment,Self-Employment (required, array) - Sources of income
+    + averageMonthlyRepayments: 850 (required, number) - Total repayments per month applicant currently pays
+    + averageMonthlyRepaymentsWillChange: true (required, boolean) - Applicant expects that his monthly replayments will change in next month
+    + averageMonthlyRepaymentsNextMonth: 650 (required, number) - Total repayments per month applicant will pay next month
+
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
+    + Body
+        
+            {
+                "averageIncomePerMonth": 2500,
+                "averageIncomePerMonthWillChange": false,
+                "incomeSource": ["Employment", "Self-Employment"],
+                "averageMonthlyRepayments": 850,
+                "averageMonthlyRepaymentsWillChange": true
+            }
+
++ Response 200 (application/json)
+    + Attributes
+
+### Budget [GET]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+
++ Response 200 (application/json)
+    + Body
+        
+            {
+                "averageIncomePerMonth": 2500,
+                "averageIncomePerMonthWillChange": false,
+                "incomeSource": ["Employment", "Self-Employment"],
+                "averageMonthlyRepayments": 850,
+                "averageMonthlyRepaymentsWillChange": true
+            }
+    
+    
+## Client profile [/application/client/profile]
+
+### Update client application profile [PATCH]
+    Updates client profile attributes in application. Only attributes that are part of request are updated. Address has to be provided as a whole to proceed corretly
++ Attributes
+    + firstName: Petr (string) - Client first name
+    + lastName: Hurdley (string) - Client last name
+    + email: petr.hu@gmail.com (string) - Client email
+    + personalId: abx173948fj (string) - Client personal ID
+    + phoneNumber: +420605777555 (string) - Client phone number already verified TODO in international format
+    + dateOfBirth: 1978-08-16 (date) - Client date of birth
+    + permamentResidence: 50 Reola rd. Vilnius 50501 (object) - Clients Address
+
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+
+    + Body
+        
+            {
+                "firstName": "Petr",
+                "lastName": "Hurdley",
+                "email": "petr.hurdley@gmail.com",
+                "personalId": "abx173838483",
+                "phoneNumber": "+420605893232",
+                "dateOfBirth": "1978-08-16",
+                "permanentResidence": {
+                    "street": "Reola rd.",
+                    "houseNumber": "45",
+                    "city": "Vilnius",
+                    "zip": "60601"
+                }
+            }
+
++ Response 200 (application/json)
+    + Body
+        
+            {
+                "missingInfo": ["personalId","permanentAddress"]
+            }
+
++ Response 400 (application/json)
+    Errors are provided only for data that has been sent in request, the "missingInfo" contains information the client detail application is still missing. Invalid data is not updated in the application
+    + Body
+        
+            {
+                "errorKey": ["invalid_address", "invalid_personalId", "invalid_phone", "invalid_dob"],
+                "missingInfo": ["personalId","permanentAddress"]
+            }
+
+### Get client application profile [GET]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+
++ Response 200 (application/json)
+
+       + Body
+        
+            {
+                "firstName": "Petr",
+                "lastName": "Hurdley",
+                "email": "petr.hurdley@gmail.com",
+                "personalId": "abx173838483",
+                "phoneNumber": "+420605893232",
+                "dateOfBirth": "1978-08-16",
+                "permanentResidence": {
+                    "street": "Reola rd.",
+                    "houseNumber": "45",
+                    "city": "Vilnius",
+                    "zip": "60601"
+                }
+                
+            }
+
+
+## Application offer constraints [/application/offer/constraints]
+### Get loan offer constraints [GET]
++ Request
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+  
++ Response 200
+    + Body
+        
+            { 
+                "minimumDeposit": 1500,
+                "maximumDeposit": 15000
+            }
+
+## Application offer [/application/offer?depositAmount={depositAmount}]
+    This can be used for offers in the first part of process before application submission but also for the "Best offer" functionality
+### Get loan offer [GET]
+
++ Parameters
+    + depositAmount: 3000 (number, optional) - Value of the deposit used to compute offers
+
++ Request
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+
+  
++ Response 200 (application/json)
+    + Attributes (ConditionalOffer)
+
+    + Body
+    
+            [
+                {
+                    "offerId": "31353",
+                    "deposit": 3000,
+                    "term": 36,
+                    "endDate": "2018-09-21",
+                    "totalMonthlyPayment": 360,
+                    "carPayment": 300,
+                    "insurance": 50,
+                    "casco": 40,
+                    "tpl": 10,
+                    "totalRepayable": 12000,
+                    "interestAmount": 1000,
+                    "interestRate": 0.336,
+                    "annualPercentageRate": 0.456,
+                    "recommended": false
+                },
+                {
+                    "offerId": "31354",
+                    "deposit": 3000,
+                    "term": 36,
+                    "endDate": "2018-09-21",
+                    "totalMonthlyPayment": 360,
+                    "carPayment": 300,
+                    "insurance": 50,
+                    "casco": 40,
+                    "tpl": 10,
+                    "totalRepayable": 12000,
+                    "interestAmount": 1000,
+                    "interestRate": 0.336,
+                    "annualPercentageRate": 0.456,
+                    "recommended": true
+                },
+                {
+                    "offerId": "31355",
+                    "deposit": 3000,
+                    "term": 36,
+                    "endDate": "2018-09-21",
+                    "totalMonthlyPayment": 360,
+                    "carPayment": 300,
+                    "insurance": 50,
+                    "casco": 40,
+                    "tpl": 10,
+                    "totalRepayable": 12000,
+                    "interestAmount": 1000,
+                    "interestRate": 0.336,
+                    "annualPercentageRate": 0.456,
+                    "recommended": false
+                }
+            ]
+
+
+### Select offer [PUT]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+  
+    
+    + Body  
+    
+            { "offerId": "31355" }
+
++ Response 200 (application/json)
+    + Attributes (ConditionalOffer)
+
++ Response 404
+    
+        Offer not found
+
+## Application submission [/application/submit]
+### Submit application [POST]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+  
++ Response 200 (application/json)
+
++ Response 400
+
+
+# Group Identification
+## Application identification request creation [/identification]
+### Create identification request [POST]
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+    
+    + Attributes
+        + clientId: abcd94039585 (required, string) - Client ID
+        + requestedBy: auto.lt.website (required, string) - Requesting application
+        + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
+        
++ Response 200 (application/json)
+    + Body
+            
+            { "requestId": "dshfuhfudhfidf04hf08qhrhqv083" }
+
+
+## Application identification handling [/identification/{requestId}]
+### Get identification status [GET]
+    Retrieve application identification status. Possible status values are REQUESTED (Waiting for client), FAILED (Identification failed), IDENTIFIED (Client succesfully identified)
+
++ Request
+    + Headers
+    
+            x-tenant: auto-lt
+    
+    + Attributes
+        + requestId: 0483290849032h0hf932 (required, string) - Identification request ID
+
++ Response 200 (application/json)
+    + Body
+            
+            { "status": "REQUESTED" }
+
+
+### Get identification status [PUT]
+    Update identification request provider
+
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+    
+    + Attributes
+        + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
+
++ Response 200 (application/json)
+    + Body
+            
+            { "requestId": "dshfuhfudhfidf04hf08qhrhqv083" }
+
+## Get micropayment bank details [/identification/{requestId}/micropayment/info]
+### Retrieve micropayment information [GET]
+    List of banks and accounts for micropayments 
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+    
+    + Attributes
+        + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
+
++ Response 200
+        
+        [
+            {
+                "bankName": "DNB Bank",
+                "accountNumber": "1234567890/7577",
+                "paymentReferenceNumber": "5558982343"
+            },
+            {
+                "bankName": "Siuliu Bank",
+                "accountNumber": "1234567890/7577",
+                "paymentReferenceNumber": "5558982343"
+            }  
+        ]
+
+
+## Get instantor bank list [/identification/{requestId}/instantor/banks]
+### Retrieve instantor bank list [GET]
+    List of instantor banks
+    
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+    
+    + Attributes
+        + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
+
++ Response 200 (application/json)
+        
+        [
+            {
+                "bankName": "DNB Bank",
+                "bankId": "lt-dnb",
+                "logo": "instantor/logo/lt-dnb.png"
+            },
+            {
+                "bankName": "Siuliu Bank",
+                "bankId": "lt-dnb",
+                "logo": "instantor/logo/lt-siuliu.png"
+            }  
+        ]
+
+# Group Dashboard
+## Application best offer [/application/best-offer]
+### Get best offer [GET]
++ Request
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+  
++ Response 200
+    + Attributes (Offer)
+
+    + Body
+    
+            [
+                {
+                    "offerId": "31353",
+                    "deposit": 3000,
+                    "term": 36,
+                    "endDate": "2018-09-21",
+                    "totalMonthlyPayment": 360,
+                    "carPayment": 300,
+                    "insurance": 50,
+                    "casco": 40,
+                    "tpl": 10,
+                    "totalRepayable": 12000,
+                    "interestAmount": 1000,
+                    "interestRate": 0.336,
+                    "annualPercentageRate": 12,
+                    "type": "change_term"
+                },
+                {
+                    "offerId": "31354",
+                    "deposit": 3000,
+                    "term": 36,
+                    "endDate": "2018-09-21",
+                    "totalMonthlyPayment": 360,
+                    "carPayment": 300,
+                    "insurance": 50,
+                    "casco": 40,
+                    "tpl": 10,
+                    "totalRepayable": 12000,
+                    "interestAmount": 1000,
+                    "interestRate": 0.336,
+                    "annualPercentageRate": 12,
+                    "type": "change_deposit"
+                }
+            ]
+
+
+### Select best offer [PUT]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+  
+    
+    + Body  
+    
+            { "offerId": "31355" }
+
++ Response 200 (application/json)
+    + Attributes (Offer)
+        
++ Response 404
+    
+        Offer not found
+
+## Get full application details [/application]
+### Get full application [GET]
++ Request
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
++ Response 200 (application/json)
+    + Attributes (Application)
+
+#Data Structures
+
+## Application (object)
++ id: 13131 (required, number) - Application id
++ offer (optional, Offer)
++ resolution: APPROVED (optional, enum) - Resolution of the application
+    + Members
+        + APPROVED
+        + REJECTED
+        + MANUAL
++ resolutionDetail: MANUALLY_APPROVED (optional, enum) - Details about the applicaiton resolution (all possible reasons to be defined later)
+    + Members
+        + MANUALLY_APPROVED
+        + LOW_INCOME
+        + CAR_STOLEN
+        + IDENTIFICATION_FAILED
+        + BAD_CREDIT_HISTORY
+        + LOW_CREDIT_SCORE_INTERNAL
+        + LOW_IOVATION_SCORE
+        + HAS_RECENT_BLACKLISTED_APPLICATION
++ status: CLOSED (required, enum) - Status of the application
+    + Members
+        + OPENED
+        + IN_PROGRESS
+        + ON_HOLD
+        + CLOSED 
+        
+## CarDetails
++ carId: 23092ru90294 (required, string) - Car ID in Nucleus
++ askingPrice: 18000 (required, string) - Asking price of the car
++ make: Toyota (required, string) - make of the car
++ model: Avensis (required, string) - model of the car
++ engineSize: 1.6 P (required, string) - engine size
++ color: Blue (required, string) - car color TODO: Is this necessary it's not in screens
++ licence: BBB 111 (required, string) - car license plate
++ mileage: 85900 (required, number) - car mileage
++ vin: WP0ZZZ997TS392124 (required, string) - car VIN code
++ year: 2009 (required, number) - year of manufacturing
++ vmi: WP0 (optional, string) - To be confirmed
++ vds: ZZZ997 (optional, string) - To be confirmed
++ vis: TS392124 (optional, string) - To be confirmed
++ status (optional, enum[string]) - Status of car
+    + Default: eligible
+    + Members
+        + eligible
+        + ineligible
+        + partially_eligible
++ warnings: age, price (optional, object) - Warnings in case car is eligible (please see Body)
+    + age (optional, object)
+        + carAge: 8 (required, number)  
+        + maxLoanLength: 36 (required, number)
+    + price (optional, object)
+        + minimumDeposit: 1500 (required, number)
+
+
+
+## Offer (object)
++ offerId: 35135 (required, number) - Id of the offer
++ deposit: 3000 (required, number) - One time deposit amount
++ term: 36 (required, number) - Loan term in months
++ endDate: '2018-09-21' (required, date) - End date of the loan
++ totalMonthlyPayment: 360 (required, number) - Total monthly payment
++ carPayment: 300 (required, number) - Monthly car payment
++ insurance: 50 (required, number) - Monthly insurance payment
++ casco: 40 (required, number) - Monthly casco payment
++ tpl: 10 (required, number) - Monthly tpl payment
++ totalRepayable: 12000 (required, number) - Total repayable ammount
++ interestAmount: 1000 (required, number) - Total loan interest
++ annualPercentageRate: 12 (required, number) - Effective annual percentage rate
+
+## ConditionalOffer (Offer)
++ recommended: true (required, boolean) - true if the offer is recommended by the system
+
+## ApplicationBlockedStatus
++ blocked: false (required, boolean) - Whenever the application is blocked
+
+## SmsCodeStatus
++ mobilePhoneNumber: 031674813 (required, string) - clients mobile phone number
++ verificationRequired: true (required, boolean) - true if the mobile is not verified
++ canResendAfter: 0 (required, number) - Indicates when a user can requires
