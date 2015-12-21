@@ -102,19 +102,35 @@ Here is a basic flow of request that are made screen by screen
 ## Login [/oauth/token]
 
 ### Login [POST]
-    According to oAuth specification. Any additional requests should contain the Authorizatino header
+    Any additional requests should contain the Authorizatino header.
     
         Authorization: Bearer akghakjdghu42iu2h4jkkdh9813yedh109313rhudh1783
-+ Attributes
+        
+    If in this request you provide instead of username/password/client_id a valid Authorization header, a new extended token will be issued to you.
+        
++ Attributes 
     + username: test@test.com (required, string) - Users email/username
     + password: password123 (required, string) - Password
     + client_id: auto-lt-website (required, string) - oAuth client id
-    + client_secret: abcd1234 (required, string) - Client Secret
-    + grant_type: password (required, string) - Predefined value "password"
 
-+ Request (application/x-www-form-urlencoded)
++ Request (application/json)
+    + Headers
+        
+            Authorization: Bearer akghakjdghu42iu2h4jkkdh9813yedh109313rhudh1783
+        
+    + Body
+    
+            {
+                "username": "test@test.com",
+                "password": "password123",
+                "client_id": "auto-lt-website"
+            }
 
-+ Response 200 (application/json)
++ Response 200
+    
+            String containing the actual base64 encoded token
+            
++ Response 401
 
 ## User status [/{client}/{email}/status]
 
