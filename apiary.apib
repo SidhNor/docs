@@ -52,7 +52,10 @@ Here is a basic flow of request that are made screen by screen
 
 + Request (application/x-www-form-urlencoded)
 
-+ Response 200
++ Response 200 (text/html)
+
+        Changed
+        
 + Response 400 (application/json)
     
         {
@@ -72,6 +75,9 @@ Here is a basic flow of request that are made screen by screen
 + Request (application/x-www-form-urlencoded)
 
 + Response 200 (application/json)
+    
+        { }
+
 + Response 400 (application/json)
     
         {
@@ -90,6 +96,9 @@ Here is a basic flow of request that are made screen by screen
 + Request (application/x-www-form-urlencoded)
 
 + Response 200 (application/json)
+    
+        { }
+
 + Response 400 (application/json)
     
         {
@@ -126,11 +135,11 @@ Here is a basic flow of request that are made screen by screen
                 "client_id": "auto-lt-website"
             }
 
-+ Response 200
++ Response 200 (text/html)
     
             String containing the actual base64 encoded token
             
-+ Response 401
++ Response 401 (text/html)
 
 ## User status [/{client}/{email}/status]
 
@@ -164,7 +173,10 @@ Here is a basic flow of request that are made screen by screen
     + Attributes
         + phoneNumber: +420605789456 (string, required) - Phone number to verify
 
-+ Response 200
++ Response 200 (application/json)
+        
+        { }
+
 + Response 400 (application/json)
         
         {
@@ -182,11 +194,11 @@ Here is a basic flow of request that are made screen by screen
     + Attributes
         + phoneNumber: +420605789456 (string, required) - Phone number to verify
 
-+ Response 200
++ Response 200 (text/html)
     
         Code is valid and ready for verification
 
-+ Response 404 
++ Response 404 (text/html)
         
         Code is not sent
             
@@ -419,6 +431,7 @@ Here is a basic flow of request that are made screen by screen
 
 + Response 400 (application/json)
     
+        { }
 
 ### Car Details [GET]
 
@@ -615,7 +628,7 @@ Here is a basic flow of request that are made screen by screen
             x-tenant: auto-lt
             Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
   
-+ Response 200
++ Response 200 (application/json)
     + Body
         
             { 
@@ -722,9 +735,12 @@ Here is a basic flow of request that are made screen by screen
             Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
   
 + Response 200 (application/json)
+        
+        { }
 
-+ Response 400
-
++ Response 400 (application/json)
+        
+        { }
 
 # Group Identification
 ## Application identification request creation [/identification]
@@ -790,7 +806,7 @@ Here is a basic flow of request that are made screen by screen
     + Attributes
         + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
 
-+ Response 200
++ Response 200 (application/json)
         
         [
             {
@@ -842,7 +858,7 @@ Here is a basic flow of request that are made screen by screen
             x-tenant: auto-lt
             Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
   
-+ Response 200
++ Response 200 (application/json)
     + Attributes (Offer)
 
     + Body
