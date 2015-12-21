@@ -932,29 +932,17 @@ Here is a basic flow of request that are made screen by screen
 #Data Structures
 
 ## Application (object)
-+ id: 13131 (required, number) - Application id
++ id: 13131asdasd (required, string) - Application id
 + offer (optional, Offer)
-+ resolution: APPROVED (optional, enum) - Resolution of the application
++ status: APPROVED (required, enum) - Status of the application
     + Members
+        + APPLICATION_NOT_SUBMITTED
+        + IN_PROGRESS
         + APPROVED
         + REJECTED
-        + MANUAL
-+ resolutionDetail: MANUALLY_APPROVED (optional, enum) - Details about the applicaiton resolution (all possible reasons to be defined later)
-    + Members
-        + MANUALLY_APPROVED
-        + LOW_INCOME
-        + CAR_STOLEN
-        + IDENTIFICATION_FAILED
-        + BAD_CREDIT_HISTORY
-        + LOW_CREDIT_SCORE_INTERNAL
-        + LOW_IOVATION_SCORE
-        + HAS_RECENT_BLACKLISTED_APPLICATION
-+ status: CLOSED (required, enum) - Status of the application
-    + Members
-        + OPENED
-        + IN_PROGRESS
-        + ON_HOLD
-        + CLOSED 
+        + AWAITING_IDENTIFICATION
+        + AWAITING_MANUAL_CAR_CHECKS
+        + BEST_OFFER_AVAILABLE
         
 ## CarDetails
 + carId: 23092ru90294 (required, string) - Car ID in Nucleus
