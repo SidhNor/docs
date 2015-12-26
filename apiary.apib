@@ -758,7 +758,7 @@ Here is a basic flow of request that are made screen by screen
     
     + Attributes
         + clientId: abcd94039585 (required, string) - Client ID
-        + requestedBy: auto.lt.website (required, string) - Requesting application
+        + requestedBy: auto-lt-website (required, string) - Requesting clientId
         + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
         
 + Response 200 (application/json)
@@ -767,7 +767,7 @@ Here is a basic flow of request that are made screen by screen
             { "requestId": "dshfuhfudhfidf04hf08qhrhqv083" }
 
 
-## Application identification handling [/identification/{requestId}]
+## Application identification handling [/identification/{clientId}]
 ### Get identification status [GET]
     Retrieve application identification status. Possible status values are REQUESTED (Waiting for client), FAILED (Identification failed), IDENTIFIED (Client succesfully identified)
 
@@ -777,7 +777,7 @@ Here is a basic flow of request that are made screen by screen
             x-tenant: auto-lt
     
     + Attributes
-        + requestId: 0483290849032h0hf932 (required, string) - Identification request ID
+        + clientId: abcd1234 (required, string) - Client id of client being identified
 
 + Response 200 (application/json)
     + Body
@@ -797,20 +797,14 @@ Here is a basic flow of request that are made screen by screen
         + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
 
 + Response 200 (application/json)
-    + Body
-            
-            { "requestId": "dshfuhfudhfidf04hf08qhrhqv083" }
 
-## Get micropayment bank details [/identification/{requestId}/micropayment/info]
+## Get micropayment bank details [/identification/{clientId}/micropayment/info]
 ### Retrieve micropayment information [GET]
     List of banks and accounts for micropayments 
 + Request (application/x-www-form-urlencoded)
     + Headers
     
             x-tenant: auto-lt
-    
-    + Attributes
-        + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
 
 + Response 200 (application/json)
         
@@ -828,7 +822,7 @@ Here is a basic flow of request that are made screen by screen
         ]
 
 
-## Get instantor bank list [/identification/{requestId}/instantor/banks]
+## Get instantor bank list [/identification/{clientId}/instantor/banks]
 ### Retrieve instantor bank list [GET]
     List of instantor banks
     
@@ -836,9 +830,6 @@ Here is a basic flow of request that are made screen by screen
     + Headers
     
             x-tenant: auto-lt
-    
-    + Attributes
-        + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
 
 + Response 200 (application/json)
         
