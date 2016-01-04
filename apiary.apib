@@ -405,7 +405,20 @@ Here is a basic flow of request that are made screen by screen
             "maxCarAgeYears": 13,
             "minApplicantAge": 18
         }
-        
+
+## Application - Product selection [/application/product/{product}]
+### Select product type [POST]
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
+    + Attributes
+        + product: PURCHASE (string) - Loan product type (PURCHASE, LEASEBACK)
+
++ Response 200
+
 
 ## Application - Car [/application/car]
 ### Add car to application [POST]
@@ -524,11 +537,13 @@ Here is a basic flow of request that are made screen by screen
     
     + Attributes
         + carId: 432798743892892r  (required, string) - CarID generated in car check call
+        + priceId: 1234567  (optional, string) - PriceId if there were multiple car matches
     
     + Body
         
             {
-                "carId": "432798743892892r"
+                "carId": "432798743892892r",
+                "priceId": 1234567
             }
 
 + Response 200 (application/json)
