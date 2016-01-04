@@ -431,7 +431,48 @@ Here is a basic flow of request that are made screen by screen
             }
     
 + Response 200 (application/json)
-    + Attributes (CarDetails)
+    + Attributes (CarDetailsWithMatches)
+    
+    + Body
+            
+            {
+                "carId": "23092ru90294",
+                "askingPrice": 18500,
+                "make": "Toyota",
+                "model": "Avensis",
+                "engineSize": "1.6 P",
+                "mileage": 85900,
+                "color": "Blue",
+                "licence": "BBB 111",
+                "vin": "WP0ZZZ997TS392124",
+                "year": "2009",
+                "vmi": "WP0",
+                "vds": "ZZZ997",
+                "vis": "TS392124",
+                "status": "eligible",
+                "warnings": {
+                    "age": {"carAge": 8, "maxLoanLength": 36},
+                    "price": {"minimumDeposit": 1500}
+                },
+                possibleMatches: [
+                    {
+                        "make": "Audi",
+                        "model": "A4",
+                        "modification": "Sportpakett",
+                        "engineVolume": 1897,
+                        "category": "M1-AB",
+                        "body": "HTB",
+                        "fuel": "PETROL",
+                        "doors": 3,
+                        "modelYearFrom": 2003,
+                        "modelYearTo": 2016,
+                        "productionYear": 2009,
+                        "weightWithoutLoad": 1250,
+                        "maximumWeight": 2100,
+                        "carPriceId": 137584
+                    }
+                ]
+            }
 
 + Response 400 (application/json)
     
@@ -940,8 +981,9 @@ Here is a basic flow of request that are made screen by screen
         + AWAITING_IDENTIFICATION
         + AWAITING_MANUAL_CAR_CHECKS
         + BEST_OFFER_AVAILABLE
-        
-## CarDetails
+     
+   
+## CarDetails (object)
 + carId: 23092ru90294 (required, string) - Car ID in Nucleus
 + askingPrice: 18000 (required, string) - Asking price of the car
 + make: Toyota (required, string) - make of the car
@@ -969,6 +1011,25 @@ Here is a basic flow of request that are made screen by screen
         + minimumDeposit: 1500 (required, number)
 
 
+## CarDetailsWithMatches (CarDetails)
++ possibleMatches: abcd (optional, array[PossibleCarMatch]) - Possible car matches to show to user
+   
+
+## PossibleCarMatch (object)
++ make
++ model
++ modification
++ engineVolume
++ category
++ body
++ fuel
++ doors
++ modelYearFrom
++ modelYearTo
++ productionYear
++ weightWithoutLoad
++ maximumWeight
++ carPriceId
 
 ## Offer (object)
 + offerId: 35135 (required, number) - Id of the offer
