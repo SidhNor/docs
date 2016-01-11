@@ -808,7 +808,7 @@ Here is a basic flow of request that are made screen by screen
 # Group Identification
 ## Application identification request creation [/identification]
 ### Create identification request [POST]
-+ Request (application/x-www-form-urlencoded)
++ Request (application/json)
     + Headers
     
             x-tenant: auto-lt
@@ -817,6 +817,14 @@ Here is a basic flow of request that are made screen by screen
         + clientId: abcd94039585 (required, string) - Client ID
         + requestedBy: auto-lt-website (required, string) - Requesting clientId
         + provider: instantor (required, string) - Selected provider of identifcation (INSTANTOR, IPASAS, MICROPAYMENT)
+        
+    + Body
+    
+            {
+                "clientId": "abcd940394895",
+                "requestedBy": "auto-lt-website",
+                "provider": "INSTANTOR"
+            }
         
 + Response 200 (application/json)
     + Body
@@ -845,13 +853,19 @@ Here is a basic flow of request that are made screen by screen
 ### Update identification provider [PUT]
     Update identification request provider
 
-+ Request (application/x-www-form-urlencoded)
++ Request (application/json)
     + Headers
     
             x-tenant: auto-lt
     
     + Attributes
-        + provider: instantor (required, string) - Selected provider of identifcation (instantor, ipasas, micropayment)
+        + provider: instantor (required, string) - Selected provider of identifcation (INSTANTOR, IPASAS, MICROPAYMENT)
+        
+    + Body
+            
+            {
+                "provider": "INSTANTOR"
+            }
 
 + Response 200 (application/json)
 
