@@ -389,6 +389,36 @@ Here is a basic flow of request that are made screen by screen
             "errorKey": "timeslot_already_reserved"
         }
 
+# Group Anonymously called services before application
+## Loan calculator
+### Calculate nonbinding offer [GET]
++ Request
+    + Attributes
+        + askingPrice: 3500 (required, number) - Asking price
+        + loanTermMonths: 36 (required, number) - Loan term in months
+        + deposit: 1000 (required, number) - Deposit amount 
+
+    + Headers
+    
+            x-tenant: auto-lt
+
++ Response 200 (application/json)
+       
+        {
+            "deposit": 1000,
+            "term": 36,
+            "endDate": "2021-07-16",
+            "totalMonthlyPayment": 156,
+            "insurancePerMonth": 87,
+            "totalCarPayment": 3000,
+            "totalInterest": 1200,
+            "totalRepayable": 4587,
+            "initialFee": 156,
+            "interestRate": 0.352,
+            "annualPercentageRate": 0.458
+            
+        }
+
 # Group Application process
 ## Get initial loan constraint data [/loan/constraints]
 ### Get initial loan constraint data [GET]
