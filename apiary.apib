@@ -13,8 +13,8 @@ Here is a basic flow of request that are made screen by screen
 
 ### Register new user [POST]
 + Attributes
-    + firstName: TestFirstName (required, string) - Users first name
-    + lastName: TestSurname (required, string) - Users surname
+    + firstName: TestFirstName (optional, string) - Users first name
+    + lastName: TestSurname (optional, string) - Users surname
     + email: testemail@testserver.com (required, string) - Users email
     + client: auto-lt-website (required, string) - oAuth client id
 
@@ -137,7 +137,7 @@ Here is a basic flow of request that are made screen by screen
 
 + Response 200 (text/html)
     
-            String containing the actual base64 encoded token
+            String containing the actual base64 encoded token according to JSON Web Tokens specs http://jwt.io .
             
 + Response 401 (text/html)
 
@@ -390,7 +390,7 @@ Here is a basic flow of request that are made screen by screen
         }
 
 # Group Anonymously called services before application
-## Loan calculator
+## Loan calculator [/application/calculator]
 ### Calculate nonbinding offer [GET]
 + Request
     + Attributes
@@ -418,6 +418,21 @@ Here is a basic flow of request that are made screen by screen
             "annualPercentageRate": 0.458
             
         }
+
+# Group Iovation
+## Send Iovation data [/application/iovation]
+### Send Iovation blackbox [POST]
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
+    + Body
+            
+            djflkjsjl4jg3ioboirejo - IOVATION BLACKBOX DATA
+
++ Response 200
 
 # Group Application process
 ## Get initial loan constraint data [/loan/constraints]
@@ -456,13 +471,11 @@ Here is a basic flow of request that are made screen by screen
     + Headers
     
             x-tenant: auto-lt
-            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
     
     + Attributes
         + vin: TMBKE37293949294393  (string) - Car Vin number
         + licensePlate: AKY-234 (string) - License place
         + askingPrice: 8900 (number) - Asking price
-        + mileage: 85900 (number) - Car mileage
     
     + Body
         
@@ -470,7 +483,6 @@ Here is a basic flow of request that are made screen by screen
                 "vin": "TMBKE37293949294393",
                 "licensePlate": "AKY-234",
                 "askingPrice": 8900,
-                "mileage": 85900
             }
     
 + Response 200 (application/json)
@@ -489,13 +501,15 @@ Here is a basic flow of request that are made screen by screen
                 "licence": "BBB 111",
                 "vin": "WP0ZZZ997TS392124",
                 "year": "2009",
-                "vmi": "WP0",
-                "vds": "ZZZ997",
-                "vis": "TS392124",
                 "status": "eligible",
+                "maxMileage": 60000,
+                "insuranceCasco": 350,
+                "insuranceTpv": 35,
+                "maxFinancableAmount": 3500,
                 "warnings": {
                     "age": {"carAge": 8, "maxLoanLength": 36},
-                    "price": {"minimumDeposit": 1500}
+                    "price": {"minimumDeposit": 1500},
+                    "manual_insurance": true
                 },
                 possibleMatches: [
                     {
@@ -545,9 +559,6 @@ Here is a basic flow of request that are made screen by screen
                 "licence": "BBB 111",
                 "vin": "WP0ZZZ997TS392124",
                 "year": "2009",
-                "vmi": "WP0",
-                "vds": "ZZZ997",
-                "vis": "TS392124",
                 "status": "eligible",
                 "warnings": {
                     "age": {"carAge": 8, "maxLoanLength": 36},
@@ -563,7 +574,6 @@ Here is a basic flow of request that are made screen by screen
     + Headers
     
             x-tenant: auto-lt
-            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
     
     + Attributes
         + carId: 432798743892892r  (required, string) - CarID generated in car check call
@@ -580,6 +590,87 @@ Here is a basic flow of request that are made screen by screen
     + Attributes (CarDetails)
     
 
+## Application - Car storage [/application/car/store]
+### Store car in applications list of cars [POST]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
+    + Attributes
+        + carId: 432798743892892r  (required, string) - CarID generated in car check call
+    
+    + Body
+        
+            {
+                "carId": "432798743892892r"
+            }
+
++ Response 200 (application/json)
+    + Attributes (CarDetails)
+    
+
+## Application - Car final selection [/application/car/select]
+### Select car from the ones in application [POST]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
+    + Attributes
+        + carId: 432798743892892r  (required, string) - CarID generated in car check call
+    
+    + Body
+        
+            {
+                "carId": "432798743892892r"
+            }
+
++ Response 200 (application/json)
+    + Attributes (CarDetails)
+    
+
+## Application - Budget calculator [/application/budget/calculate]
+### Calculate budget journey [POST]
++ Attributes
+    + averageIncomePerMonth: 2500 (required, number) - Average income per month
+    + averageIncomePerMonthWillChange: false (required, boolean) - Whether clien expects budget to change in next month
+    + averageIncomePerMonthNextMonth: 2600 (required, number) - Average income per month after change
+    + incomeSource: Employment,Self-Employment (required, array) - Sources of income
+    + averageMonthlyRepayments: 850 (required, number) - Total repayments per month applicant currently pays
+    + averageMonthlyRepaymentsWillChange: true (required, boolean) - Applicant expects that his monthly replayments will change in next month
+    + averageMonthlyRepaymentsNextMonth: 650 (required, number) - Total repayments per month applicant will pay next month
+
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+    
+    + Body
+        
+            {
+                "averageIncomePerMonth": 2500,
+                "averageIncomePerMonthWillChange": false,
+                "incomeSource": ["Employment", "Self-Employment"],
+                "averageMonthlyRepayments": 850,
+                "averageMonthlyRepaymentsWillChange": true,
+                "averageMonthlyRepaymentsNextMonth": 2800
+            }
+
++ Response 200 (application/json)
+    + Attributes
+        + maxTotalMonthlyPayment: 253 (required, number)
+        + offers (required, array)
+            + loanAmount: 3500 (required, number)
+            + endDate: "2021-07-13" (required, number)
+            + term: 36 (required, number)
+            + interestAmount: 2100 (required, number)
+            + annualPercentageRate: 0.458 (required, number)
+            + interestRate: 0.33 (required, number)
+            + totalRepayable: 5627 (required, number)
+    
 
 ## Application - Budget [/application/budget]
 ### Add Budget [POST]
@@ -631,9 +722,8 @@ Here is a basic flow of request that are made screen by screen
                 "averageMonthlyRepaymentsNextMonth": 2800
             }
     
-    
-## Client profile [/application/client/profile]
 
+## Client profile [/application/client/profile]
 ### Update client application profile [PATCH]
     Updates client profile attributes in application. Only attributes that are part of request are updated. Address has to be provided as a whole to proceed corretly
 + Attributes
@@ -730,7 +820,6 @@ Here is a basic flow of request that are made screen by screen
             }
 
 ## Application offer [/application/offer?depositAmount={depositAmount}]
-    This can be used for offers in the first part of process before application submission but also for the "Best offer" functionality
 ### Get loan offer [GET]
 
 + Parameters
@@ -948,74 +1037,6 @@ Here is a basic flow of request that are made screen by screen
         ]
 
 # Group Dashboard
-## Application best offer [/application/best-offer]
-### Get best offer [GET]
-+ Request
-    + Headers
-    
-            x-tenant: auto-lt
-            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
-  
-+ Response 200 (application/json)
-    + Attributes (Offer)
-
-    + Body
-    
-            [
-                {
-                    "offerId": "31353",
-                    "deposit": 3000,
-                    "term": 36,
-                    "endDate": "2018-09-21",
-                    "totalMonthlyPayment": 360,
-                    "carPayment": 300,
-                    "insurance": 50,
-                    "casco": 40,
-                    "tpl": 10,
-                    "totalRepayable": 12000,
-                    "interestAmount": 1000,
-                    "interestRate": 0.336,
-                    "annualPercentageRate": 12,
-                    "type": "change_term"
-                },
-                {
-                    "offerId": "31354",
-                    "deposit": 3000,
-                    "term": 36,
-                    "endDate": "2018-09-21",
-                    "totalMonthlyPayment": 360,
-                    "carPayment": 300,
-                    "insurance": 50,
-                    "casco": 40,
-                    "tpl": 10,
-                    "totalRepayable": 12000,
-                    "interestAmount": 1000,
-                    "interestRate": 0.336,
-                    "annualPercentageRate": 12,
-                    "type": "change_deposit"
-                }
-            ]
-
-
-### Select best offer [PUT]
-+ Request (application/json)
-    + Headers
-    
-            x-tenant: auto-lt
-            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
-  
-    
-    + Body  
-    
-            { "offerId": "31355" }
-
-+ Response 200 (application/json)
-    + Attributes (Offer)
-        
-+ Response 404
-    
-        Offer not found
-
 ## Get full application details [/application]
 ### Get full application [GET]
 + Request
@@ -1033,15 +1054,20 @@ Here is a basic flow of request that are made screen by screen
 + id: 13131asdasd (required, string) - Application id
 + offer (optional, Offer)
 + product: PURCHASE
++ budgetJourneyDone: true
++ carJourneyDone: true
++ budgetMaxMonthlyPayment: 300 (optional, number)
++ cars (optional, array)
 + status: APPROVED (required, enum) - Status of the application
     + Members
         + APPLICATION_NOT_SUBMITTED
         + IN_PROGRESS
+        + IN_PROGRESS_MANUAL
+        + AWAITING_INSURANCE
         + APPROVED
         + REJECTED
         + AWAITING_IDENTIFICATION
         + AWAITING_MANUAL_CAR_CHECKS
-        + BEST_OFFER_AVAILABLE
      
    
 ## CarDetails (object)
@@ -1055,9 +1081,11 @@ Here is a basic flow of request that are made screen by screen
 + mileage: 85900 (required, number) - car mileage
 + vin: WP0ZZZ997TS392124 (required, string) - car VIN code
 + year: 2009 (required, number) - year of manufacturing
-+ vmi: WP0 (optional, string) - To be confirmed
-+ vds: ZZZ997 (optional, string) - To be confirmed
-+ vis: TS392124 (optional, string) - To be confirmed
++ maxFinancableAmount: 3500 (optional, number) - Maximum amount we're to pledge against the car
++ minimumDeposit: 1500 (optional, number)
++ insuranceCasco: 350 (optional, number) - Casco insurance per year
++ insuranceTpv: 30 (optional, number) - TPV insurance per year
++ maxMileage: 60000 (optional, number) - Maximum mileage the car can have to be financeable
 + status (optional, enum[string]) - Status of car
     + Default: eligible
     + Members
@@ -1070,6 +1098,7 @@ Here is a basic flow of request that are made screen by screen
         + maxLoanLength: 36 (required, number)
     + price (optional, object)
         + minimumDeposit: 1500 (required, number)
+    + manual_insurance (optional, boolean)
 
 
 ## CarDetailsWithMatches (CarDetails)
@@ -1105,6 +1134,7 @@ Here is a basic flow of request that are made screen by screen
 + totalRepayable: 12000 (required, number) - Total repayable ammount
 + interestAmount: 1000 (required, number) - Total loan interest
 + annualPercentageRate: 12 (required, number) - Effective annual percentage rate
++ loanAmount: 3500 (required, number) - Loan amount
 
 ## ConditionalOffer (Offer)
 + recommended: true (required, boolean) - true if the offer is recommended by the system
