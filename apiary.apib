@@ -342,13 +342,13 @@ Here is a basic flow of request that are made screen by screen
         
         [
             {
-                "timeSlotStart": "2015-12-20 13:00:00+02:00",
-                "timeSlotEnd": "2015-12-20 14:00:00+02:00",
+                "timeSlotStart": "2015-12-20 13:00:00",
+                "timeSlotEnd": "2015-12-20 14:00:00",
                 "reserved": false
             },
             {
-                "timeSlotStart": "2015-12-20 14:00:00+02:00",
-                "timeSlotEnd": "2015-12-20 15:00:00+02:00",
+                "timeSlotStart": "2015-12-20 14:00:00",
+                "timeSlotEnd": "2015-12-20 15:00:00",
                 "reserved": true
             }
         ]
@@ -363,8 +363,8 @@ Here is a basic flow of request that are made screen by screen
 ### Reserve car register timeslot [POST]
 + Attributes
     + office_id: regitra-017 (required, string)
-    + timeSlotStart: "2015-12-20 13:00:00+02:00" (required, string) - Start of timeslot to reserve
-    + timeSlotEnd: "2015-12-20 14:00:00+02:00" (required, string) - End of timeslot to reserve
+    + timeSlotStart: "2015-12-20 13:00:00" (required, string) - Start of timeslot to reserve
+    + timeSlotEnd: "2015-12-20 14:00:00" (required, string) - End of timeslot to reserve
 
 + Request (application/json)
     + Headers
@@ -374,8 +374,8 @@ Here is a basic flow of request that are made screen by screen
     + Body
     
             {
-                "timeSlotStart": "2015-12-20 13:00:00+02:00",
-                "timeSlotEnd": "2015-12-20 14:00:00+02:00"
+                "timeSlotStart": "2015-12-20 13:00:00",
+                "timeSlotEnd": "2015-12-20 14:00:00"
             }
 
 + Response 200 (application/json)
@@ -567,6 +567,42 @@ Here is a basic flow of request that are made screen by screen
             }
     
 
+## Application - Get list of stored cars [/application/car/stored]
+### List of stored cars [GET]
+
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
++ Response 200 (application/json)
+    + Attributes (CarDetails)
+    
+    + Body
+    
+            {
+                "lastUpdated": "2016-01-02T19:27:12+01:00",
+                "cars" : [
+                    {
+                        "carId": "23092ru90294",
+                        "askingPrice": 18500,
+                        "make": "Toyota",
+                        "model": "Avensis",
+                        "engineSize": "1.6 P",
+                        "mileage": 85900,
+                        "color": "Blue",
+                        "licence": "BBB 111",
+                        "vin": "WP0ZZZ997TS392124",
+                        "year": "2009",
+                        "status": "eligible",
+                        "warnings": {
+                            "age": {"carAge": 8, "maxLoanLength": 36},
+                            "price": {"minimumDeposit": 1500}
+                        }
+                    }
+                ]
+            }
 
 ## Application - Car confirmation [/application/car/confirm]
 ### Confirm car and attach to application [POST]
@@ -714,6 +750,8 @@ Here is a basic flow of request that are made screen by screen
     + Body
         
             {
+                "lastUpdated": "2016-02-01T18:30:20+01:00"
+                "maxMonthlyPayment": 350,
                 "averageIncomePerMonth": 2500,
                 "averageIncomePerMonthWillChange": false,
                 "incomeSource": ["Employment", "Self-Employment"],
@@ -1056,8 +1094,6 @@ Here is a basic flow of request that are made screen by screen
 + product: PURCHASE
 + budgetJourneyDone: true
 + carJourneyDone: true
-+ budgetMaxMonthlyPayment: 300 (optional, number)
-+ cars (optional, array)
 + status: APPROVED (required, enum) - Status of the application
     + Members
         + APPLICATION_NOT_SUBMITTED
