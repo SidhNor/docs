@@ -472,7 +472,7 @@ Here is a basic flow of request that are made screen by screen
 
 
 ## Application - Car [/application/car]
-### Add car to application [POST]
+### Anonymous Car check/information [POST]
 + Request (application/json)
     + Headers
     
@@ -541,7 +541,7 @@ Here is a basic flow of request that are made screen by screen
     
         { }
 
-### Car Details [GET]
+### Details of the selected car [GET]
 
 + Request (application/json)
     + Headers
@@ -610,8 +610,8 @@ Here is a basic flow of request that are made screen by screen
                 ]
             }
 
-## Application - Car confirmation [/application/car/confirm]
-### Confirm car and attach to application [POST]
+## Application - Car trim confirmation by priceId [/application/car/confirm]
+### Anonymous Confirm priceId match with carId [POST]
 + Request (application/json)
     + Headers
     
