@@ -249,6 +249,65 @@ Here is a basic flow of request that are made screen by screen
 
         HTML containing the actual content
 
+# Group Car search
+## Get list of make/models [/application/car/codelist]
+### Get list of make/models [GET]
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+            
++ Response 200 (application/json)
+
+        [
+            {
+                "make": "Audi",
+                "model": "A4",
+            },
+            {
+                "make": "Audi",
+                "model": "A5",
+            },
+            {
+                "make": "VW",
+                "model": "Polo",
+            }
+        ]
+
+## Search for car [/application/car/search]
+### Search for car [GET]
++ Request (application/x-www-form-urlencoded)
+    + Headers
+    
+            x-tenant: auto-lt
+            
+    + Attributes
+        + make: Audi (required, string)
+        + model: A4 (required, string)
+        + productionYear: 2009 (required, number)
+            
++ Response 200 (application/json)
+
+        [
+            {
+                "make": "Audi",
+                "model": "A4",
+                "modification": "Sportpakett",
+                "engineVolume": 1897,
+                "category": "M1-AB",
+                "body": "HTB",
+                "fuel": "PETROL",
+                "doors": 3,
+                "modelYearFrom": 2003,
+                "modelYearTo": 2016,
+                "productionYear": 2009,
+                "weightWithoutLoad": 1250,
+                "maximumWeight": 2100,
+                "carPriceId": 137584
+            }
+        ]
+
+
 # Group Abuse counter
 
 ## Abuse counter [/abuse/counter]
@@ -1134,6 +1193,7 @@ Here is a basic flow of request that are made screen by screen
         + eligible
         + ineligible
         + partially_eligible
+        + client_car_selection_required
 + warnings: age, price (optional, object) - Warnings in case car is eligible (please see Body)
     + age (optional, object)
         + carAge: 8 (required, number)  
