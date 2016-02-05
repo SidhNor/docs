@@ -850,7 +850,7 @@ Here is a basic flow of request that are made screen by screen
                 "firstName": "Petr",
                 "lastName": "Hurdley",
                 "email": "petr.hurdley@gmail.com",
-                "personalId": "abx173838483",
+                "personalId": "173838483",
                 "phoneNumber": "+420605893232",
                 "dateOfBirth": "1978-08-16",
                 "permanentResidence": {
@@ -859,6 +859,14 @@ Here is a basic flow of request that are made screen by screen
                     "appartmentNumber": "13a",
                     "city": "Vilnius",
                     "zip": "60601"
+                },
+                "married": true,
+                "spouse": {
+                    "firstName": "Romana",
+                    "lastName": "Pulgadska",
+                    "personalId": "312039485903",
+                    "averageMonthlyIncome": 2500,
+                    "averageMonthlyRepayments": 0
                 }
             }
 
@@ -874,8 +882,8 @@ Here is a basic flow of request that are made screen by screen
     + Body
         
             {
-                "errorKey": ["invalid_address", "invalid_personalId", "invalid_phone", "invalid_dob"],
-                "missingInfo": ["personalId","permanentAddress"]
+                "errorKey": ["invalid_address", "invalid_spouse.personalId", "invalid_personalId", "invalid_phone", "invalid_dob"],
+                "missingInfo": ["personalId","permanentAddress","spouse.firstName"]
             }
 
 ### Get client application profile [GET]
@@ -902,6 +910,14 @@ Here is a basic flow of request that are made screen by screen
                     "houseNumber": "45",
                     "city": "Vilnius",
                     "zip": "60601"
+                },
+                "married": true,
+                "spouse": {
+                    "firstName": "Romana",
+                    "lastName": "Pulgadska",
+                    "personalId": "312039485903",
+                    "averageMonthlyIncome": 2500,
+                    "averageMonthlyRepayments": 0
                 }
                 
             }
