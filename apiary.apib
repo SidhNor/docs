@@ -932,18 +932,35 @@ Here is a basic flow of request that are made screen by screen
             Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
   
 + Response 200 (application/json)
+    + Headers
+    
+            x-car-product: PURCHASE
+        
     + Body
         
             { 
                 "minimumDeposit": 1500,
                 "maximumDeposit": 15000
             }
+            
++ Response 201 (application/json)
+    + Headers
+    
+            x-car-product: LEASEBACK
 
-## Application offer [/application/offer?depositAmount={depositAmount}]
+    + Body
+
+            {
+                "maximumLoanAmount": 15000,
+                "minimumLoanAmount": 1500
+            }
+
+## Application offer [/application/offer?depositAmount={depositAmount}&loanAmount={loanAmount}]
 ### Get loan offer [GET]
 
 + Parameters
-    + depositAmount: 3000 (number, optional) - Value of the deposit used to compute offers
+    + depositAmount: 3000 (number, optional) - Value of the deposit used to compute offers, only for HP
+    + loanAmount: 3000 (number, optional) - Value the customer wants to borrow, only for LB
 
 + Request
     + Headers
