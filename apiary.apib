@@ -1061,6 +1061,47 @@ Here is a basic flow of request that are made screen by screen
         
         { }
 
+
+# Group Disbursement bank account details
+## Update bank account details [/application/disbursement-bank-details
+### Update bank account details [POST]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+    
+    + Body
+            
+            {
+                "iban": "LT123456789012345678"
+            }
+  
++ Response 200 (application/json)
+        
+        { }
+
++ Response 400 (application/json)
+        
+        { }
+
+        
+## Get bank account details
+### Get bank account details [POST]
++ Request (application/json)
+    + Headers
+    
+            x-tenant: auto-lt
+            Authorization: Bearer u9023ufh0fh209h902hfrhwfh0rwhf0rhw0fhwr90uf3u29f240f
+
++ Response 200 (application/json)
+        
+        {
+            "iban": "LT123456789012345678"
+        }
+
+
+
 # Group Identification
 ## Application identification request creation [/identification]
 ### Create identification request [POST]
